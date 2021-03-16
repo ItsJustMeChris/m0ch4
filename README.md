@@ -8,7 +8,7 @@ Mocha currently features a small but versatile set of features which are useful 
 - IDA style pattern scanning. 
 	- Useful for finding and maintaining miscellaneous offsets / memory addresses based on opcode patterns dumped from IDA, without the need to mess with 'masks' like most implementations. 
 - Inline-function hooking jmp placement. 
-	- Useful code to insert JMP instructions to our function in the middle of a remote function in a process, allowing us to execute our own code, or assembly, before returning to normal programmatic operation. 
+	- Useful code to insert JMP instructions to our function in the middle of a remote function in a process, allowing us to execute our own code, or assembly, before returning to normal programmatic operation. See [This GIST](https://gist.github.com/ItsJustMeChris/1aeff828b43e6aa00a477b5c79da164c) for more information. 
 - Wrapper to invoke functions from memory addresses.
 	- Useful when wanting to call functions from a memory address, without the need to declare and manage a typedef of the function. 
 - Get mach-task port from PID.
