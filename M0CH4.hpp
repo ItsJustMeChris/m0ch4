@@ -17,7 +17,7 @@ class Mocha {
         struct m_Pointer {
             uintptr_t m_address;
             uintptr_t m_offset;
-            Mocha::m_Pointer* parent;
+            std::vector<Mocha::m_Pointer> children;
 
             m_Pointer(uintptr_t address, uintptr_t offset) {
                 this->m_address = address;
@@ -51,7 +51,8 @@ class Mocha {
             return *(T*)address;
         }
         bool IsAligned(uintptr_t, uintptr_t);
-        std::vector<m_Pointer> PointerScan(uintptr_t, uintptr_t, uintptr_t);
+        std::vector<m_Pointer> PointerScan(uintptr_t, uintptr_t, uintptr_t, int = 1, int = 0);
         void SpiderScan(uintptr_t, uintptr_t, uintptr_t, int, uintptr_t, uintptr_t);
+        bool InReadableMemory(uintptr_t);
     private:
 };
