@@ -98,3 +98,59 @@ vm_address_t Mocha::BaseAddress(mach_port_t task)
 
     return firstRegionBegin;
 }
+
+vm_address_t Mocha::TopAddress(mach_port_t task)
+{
+    kern_return_t kret;
+    vm_region_basic_info_data_t info;
+    mach_vm_size_t size;
+
+    mach_port_t object_name;
+    mach_msg_type_number_t count;
+    vm_address_t firstRegionBegin;
+    vm_address_t lastRegionEnd;
+    vm_size_t fullSize = 0;
+    count = VM_REGION_BASIC_INFO_COUNT_64;
+    mach_vm_address_t address = 1;
+
+    int regionCount = 0;
+    int flag = 0;
+    while (flag == 0) {
+        //Attempts to get the region info for given task
+        kret = mach_vm_region(task, &address, &size, VM_REGION_BASIC_INFO, (vm_region_info_t)&info, &count, &object_name);
+        if (kret == KERN_SUCCESS) {
+            if (regionCount == 0) {
+                firstRegionBegin = address;
+                regionCount += 1;
+            }
+            fullSize += size;
+            address += size;
+        } else
+            flag = 1;
+    }
+    lastRegionEnd = address;
+
+    return lastRegionEnd;
+}
+
+bool Mocha::IsAligned(uintptr_t address, uintptr_t offset) {
+    return address % offset == 0x0;
+}
+
+void Mocha::PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize, uintptr_t depth) {
+    std::cout << "Pointer scan started" << std::endl;
+    for (int offset = 0; offset < scanSize; offset += alignment) {
+        uintptr_t* fnd = (uintptr_t*)(address + offset);
+        
+        if ((uintptr_t)*fnd > this->base && (uintptr_t)*fnd < this->top) {
+            std::cout << "Potential Pointer Found @ 0x" << std::hex << *fnd << std::endl;
+        } 
+    }
+}
+
+Mocha::Mocha() {
+    pid_t pid = getpid();
+    mach_port_t task = this->PIDToTask(pid);
+    this->base = this->BaseAddress(task);
+    this->top = this->TopAddress(task);
+}
