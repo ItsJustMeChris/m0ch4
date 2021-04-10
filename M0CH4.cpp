@@ -188,8 +188,8 @@ bool Mocha::InReadableMemory(uintptr_t address) {
     return false;
 }
 
-bool Mocha::m_Pointer::SearchChain(Mocha::m_Pointer* p, uintptr_t* scanSize, uintptr_t* alignment, uintptr_t* scanLow, uintptr_t* scanHigh, std::vector<Mocha::m_Pointer>* chain) {
-    for (Mocha::m_Pointer pointer : p->children) {
+bool Mocha::m_Pointer::SearchChain(uintptr_t* scanSize, uintptr_t* alignment, uintptr_t* scanLow, uintptr_t* scanHigh, std::vector<Mocha::m_Pointer>* chain) {
+    for (Mocha::m_Pointer pointer : this->children) {
         chain->push_back(pointer);        
 
         for (int offset = 0; offset < *scanSize; offset += *alignment) {
@@ -199,7 +199,7 @@ bool Mocha::m_Pointer::SearchChain(Mocha::m_Pointer* p, uintptr_t* scanSize, uin
                 return true;
             } 
         }
-        Mocha::m_Pointer::SearchChain(&pointer, scanSize, alignment, scanLow, scanHigh, chain);
+        Mocha::m_Pointer::SearchChain(scanSize, alignment, scanLow, scanHigh, chain);
     }
     return false;
 }
@@ -211,12 +211,11 @@ void Mocha::SpiderScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSiz
     for (Mocha::m_Pointer pointer : pointers) {
         temp->push_back(pointer);
         std::cout << "Looping pointers - " << pointer.children.size() << std::endl;
-        bool test = pointer.SearchChain(&pointer, &scanSize, &alignment, &scanLow, &scanHigh, temp);
+        bool test = pointer.SearchChain(&scanSize, &alignment, &scanLow, &scanHigh, temp);
         if (test) {
             std::cout << "Chain Size: " << temp->size() << std::endl;
             std::cout << std::hex << "Chain Base: " << address << std::endl;
             for (Mocha::m_Pointer p : *temp) {
-                // std::cout <<  std::hex << " Address: " << p.m_address << std::endl;
                 std::cout << std::hex << "  Offsets - " << p.m_offset << std::endl;
             }
             std::cout << std::endl;
@@ -235,17 +234,3 @@ Mocha::Mocha() {
     this->m_base = this->BaseAddress(task);
     this->m_top = this->TopAddress(task);
 }
-/*
-
-stage: 1
-    scan for poitners
-
-stage2:
-    scan those pointers for pointers
-    repeat stage2  to depth
-
-engage:
-    main routine to scan
-        
-
-*/

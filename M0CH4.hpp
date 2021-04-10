@@ -23,7 +23,7 @@ class Mocha {
                 this->m_address = address;
                 this->m_offset = offset;
             }
-            bool SearchChain(Mocha::m_Pointer*, uintptr_t*, uintptr_t*, uintptr_t*, uintptr_t*, std::vector<Mocha::m_Pointer>* chain);
+            bool SearchChain(uintptr_t*, uintptr_t*, uintptr_t*, uintptr_t*, std::vector<Mocha::m_Pointer>* chain);
         };
 
         Mocha();
