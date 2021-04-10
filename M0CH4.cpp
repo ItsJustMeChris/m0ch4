@@ -137,13 +137,13 @@ bool Mocha::IsAligned(uintptr_t address, uintptr_t offset) {
     return address % offset == 0x0;
 }
 
-void Mocha::PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize, uintptr_t depth) {
+void Mocha::PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize) {
     std::cout << "Pointer scan started" << std::endl;
     for (int offset = 0; offset < scanSize; offset += alignment) {
         uintptr_t* fnd = (uintptr_t*)(address + offset);
         
         if ((uintptr_t)*fnd > this->base && (uintptr_t)*fnd < this->top) {
-            std::cout << "Potential Pointer Found @ 0x" << std::hex << *fnd << std::endl;
+            std::cout << "Potential Pointer Found @ 0x" << std::hex << *fnd << " [OFF] - " << offset << std::endl;
         } 
     }
 }

@@ -40,7 +40,6 @@ class Mocha {
             return *(T*)address;
         }
         bool IsAligned(uintptr_t address, uintptr_t offset);
-        void PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize, uintptr_t depth);
+        void PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize);
     private:
-
 };
