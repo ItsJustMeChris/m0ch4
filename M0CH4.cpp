@@ -188,18 +188,18 @@ bool Mocha::InReadableMemory(uintptr_t address) {
     return false;
 }
 
-bool PrintM(Mocha::m_Pointer p, uintptr_t scanSize, uintptr_t alignment, uintptr_t scanLow, uintptr_t scanHigh, std::vector<Mocha::m_Pointer>* chain) {
-    for (Mocha::m_Pointer pointer : p.children) {
+bool Mocha::m_Pointer::SearchChain(Mocha::m_Pointer* p, uintptr_t* scanSize, uintptr_t* alignment, uintptr_t* scanLow, uintptr_t* scanHigh, std::vector<Mocha::m_Pointer>* chain) {
+    for (Mocha::m_Pointer pointer : p->children) {
         chain->push_back(pointer);        
 
-        for (int offset = 0; offset < scanSize; offset += alignment) {
+        for (int offset = 0; offset < *scanSize; offset += *alignment) {
             uintptr_t fnd = (uintptr_t)(pointer.m_address + offset);
 
-            if ((uintptr_t)fnd >= scanLow && (uintptr_t)fnd <= scanHigh) {
+            if ((uintptr_t)fnd >= *scanLow && (uintptr_t)fnd <= *scanHigh) {
                 return true;
             } 
         }
-        PrintM(pointer, scanSize, alignment, scanLow, scanHigh, chain);
+        Mocha::m_Pointer::SearchChain(&pointer, scanSize, alignment, scanLow, scanHigh, chain);
     }
     return false;
 }
@@ -211,7 +211,7 @@ void Mocha::SpiderScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSiz
     for (Mocha::m_Pointer pointer : pointers) {
         temp->push_back(pointer);
         std::cout << "Looping pointers - " << pointer.children.size() << std::endl;
-        bool test = PrintM(pointer, scanSize, alignment, scanLow, scanHigh, temp);
+        bool test = pointer.SearchChain(&pointer, &scanSize, &alignment, &scanLow, &scanHigh, temp);
         if (test) {
             std::cout << "Chain Size: " << temp->size() << std::endl;
             std::cout << std::hex << "Chain Base: " << address << std::endl;
