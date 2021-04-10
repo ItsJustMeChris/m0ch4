@@ -206,22 +206,22 @@ bool Mocha::m_Pointer::SearchChain(uintptr_t* scanSize, uintptr_t* alignment, ui
 
 void Mocha::SpiderScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize, int depth, uintptr_t scanLow, uintptr_t scanHigh) {
     std::vector<Mocha::m_Pointer> pointers = this->PointerScan(address, alignment, scanSize, depth);
-    std::vector<Mocha::m_Pointer>* temp = new std::vector<Mocha::m_Pointer>();
+    std::vector<Mocha::m_Pointer>* chain = new std::vector<Mocha::m_Pointer>();
 
     for (Mocha::m_Pointer pointer : pointers) {
-        temp->push_back(pointer);
+        chain->push_back(pointer);
         std::cout << "Looping pointers - " << pointer.children.size() << std::endl;
-        bool test = pointer.SearchChain(&scanSize, &alignment, &scanLow, &scanHigh, temp);
+        bool test = pointer.SearchChain(&scanSize, &alignment, &scanLow, &scanHigh, chain);
         if (test) {
-            std::cout << "Chain Size: " << temp->size() << std::endl;
+            std::cout << "Chain Size: " << chain->size() << std::endl;
             std::cout << std::hex << "Chain Base: " << address << std::endl;
-            for (Mocha::m_Pointer p : *temp) {
+            for (Mocha::m_Pointer p : *chain) {
                 std::cout << std::hex << "  Offsets - " << p.m_offset << std::endl;
             }
             std::cout << std::endl;
             std::cout << std::endl;
         }
-        temp->clear();
+        chain->clear();
 
         std::cout << std::endl;
         std::cout << std::endl;
