@@ -1,4 +1,5 @@
 #include "M0CH4.hpp"
+#include <sys/_types/_uintptr_t.h>
 
 inline std::vector<std::string> split(std::string text, char delim) {
     std::string line;
@@ -137,20 +138,36 @@ bool Mocha::IsAligned(uintptr_t address, uintptr_t offset) {
     return address % offset == 0x0;
 }
 
-void Mocha::PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize) {
-    std::cout << "Pointer scan started" << std::endl;
+std::vector<Mocha::m_Pointer> Mocha::PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize) {
+    std::vector<Mocha::m_Pointer> pointers;
+
     for (int offset = 0; offset < scanSize; offset += alignment) {
         uintptr_t* fnd = (uintptr_t*)(address + offset);
         
-        if ((uintptr_t)*fnd > this->base && (uintptr_t)*fnd < this->top) {
-            std::cout << "Potential Pointer Found @ 0x" << std::hex << *fnd << " [OFF] - " << offset << std::endl;
+        if ((uintptr_t)*fnd > this->m_base && (uintptr_t)*fnd < this->m_top) {
+            pointers.push_back(m_Pointer(*fnd, offset));
         } 
+    }
+
+    return pointers;
+}
+
+void Mocha::SpiderScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize, int depth, uintptr_t scanLow, uintptr_t scanHigh) {
+    std::vector<Mocha::m_Pointer> pointers = this->PointerScan(address, alignment, scanSize);
+    for (Mocha::m_Pointer pointer : pointers) {
+        for (int offset = 0; offset < scanSize; offset += alignment) {
+            uintptr_t fnd = (uintptr_t)(pointer.m_address + offset);
+
+            if ((uintptr_t)fnd >= scanLow && (uintptr_t)fnd <= scanHigh) {
+                std::cout << "Potential Pointer Found @ 0x" << std::hex << fnd << " [CHILD] - " << pointer.m_offset << " [OFF] - " << offset << std::endl;
+            } 
+        }
     }
 }
 
 Mocha::Mocha() {
     pid_t pid = getpid();
     mach_port_t task = this->PIDToTask(pid);
-    this->base = this->BaseAddress(task);
-    this->top = this->TopAddress(task);
+    this->m_base = this->BaseAddress(task);
+    this->m_top = this->TopAddress(task);
 }

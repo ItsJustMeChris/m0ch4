@@ -14,12 +14,23 @@
 
 class Mocha {
     public: 
+        struct m_Pointer {
+            uintptr_t m_address;
+            uintptr_t m_offset;
+            Mocha::m_Pointer* parent;
+
+            m_Pointer(uintptr_t address, uintptr_t offset) {
+                this->m_address = address;
+                this->m_offset = offset;
+            }
+        };
+
         Mocha();
 
         // Mocha Internals at Construct time to default scanning base addresses
         // to its internal process. 
-        uintptr_t base;
-        uintptr_t top;
+        uintptr_t m_base;
+        uintptr_t m_top;
 
         uintptr_t FindPattern(uintptr_t, std::string, uintptr_t);
         bool InlineHook(uintptr_t*, void*, int);
@@ -39,7 +50,8 @@ class Mocha {
         T Read(uintptr_t address) {
             return *(T*)address;
         }
-        bool IsAligned(uintptr_t address, uintptr_t offset);
-        void PointerScan(uintptr_t address, uintptr_t alignment, uintptr_t scanSize);
+        bool IsAligned(uintptr_t, uintptr_t);
+        std::vector<m_Pointer> PointerScan(uintptr_t, uintptr_t, uintptr_t);
+        void SpiderScan(uintptr_t, uintptr_t, uintptr_t, int, uintptr_t, uintptr_t);
     private:
 };
