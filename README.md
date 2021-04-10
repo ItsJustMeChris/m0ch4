@@ -30,6 +30,8 @@ Mocha currently features a small but versatile set of features which are useful 
   - Scan around a memory address for other potential pointers, this is useful for dissecting complex data structures like Linked Lists.
 - Spider Scanning
   - Scan around a memory address for potential offset pointer chains that lead to a segment of memory that you want, this is useful for finding sub-data in a custom data structure that you may need to gather more information about.
+- Helper function to determine if an address is withint readable memory
+  - Useful for helping narrow down if a pointer MIGHT be valid, of course there's no certainty that the pages permission won't change, or that that is a valid pointer. All we can do is try to mitigate invalid pointers. 
 
 # Notes
 
