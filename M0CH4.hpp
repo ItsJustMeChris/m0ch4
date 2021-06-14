@@ -34,6 +34,7 @@ class Mocha {
         uintptr_t m_top;
 
         uintptr_t FindPattern(uintptr_t, std::string, uintptr_t);
+        std::vector<uintptr_t> FindAllPattern(uintptr_t, std::string, uintptr_t);
         bool InlineHook(uintptr_t*, void*, int);
         template<typename RT, typename ...ARGS>
         RT Invoke(uintptr_t address, ARGS... args) {

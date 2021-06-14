@@ -40,6 +40,38 @@ uintptr_t Mocha::FindPattern(uintptr_t base, std::string pattern, uintptr_t size
 	return 0;
 }
 
+std::vector<uintptr_t> Mocha::FindAllPattern(uintptr_t base, std::string pat, uintptr_t size)
+{
+    std::vector<uintptr_t>rets;
+    std::vector<char>pert;
+    std::vector<std::string> patter = split(pat, ' ');
+
+    for (int i = 0; i < patter.size(); i++) {
+        if (patter.at(i) == "?") {
+            pert.push_back('\00');
+        }
+        else {
+            pert.push_back(std::stoi(patter.at(i), nullptr, 16));
+        }
+    }
+
+    uintptr_t patternLength = (uintptr_t)pert.size();
+
+    for (uintptr_t i = 0; i < size - patternLength; i++)
+    {
+        bool found = true;
+        for (uintptr_t j = 0; j < patternLength; j++)
+        {
+            found &= pert.at(j) == *(char*)(base + i + j);
+        }
+        if (found)
+        {
+            rets.push_back(base + i);
+        }
+    }
+    return rets;
+}
+
 bool Mocha::InlineHook(uintptr_t* toHook, void* ourFunct, int len)
 {
     mach_vm_protect(mach_task_self(), (mach_vm_address_t)toHook, (mach_vm_size_t)len, FALSE, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_EXECUTE | VM_PROT_COPY);
