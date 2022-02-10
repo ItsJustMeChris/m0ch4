@@ -50,7 +50,7 @@ public:
     template <typename T>
     T Read(uintptr_t address)
     {
-        return *(T *)address;
+        return (T)address;
     }
     bool IsAligned(uintptr_t, uintptr_t);
     std::vector<m_Pointer> PointerScan(uintptr_t, uintptr_t, uintptr_t, int = 1, int = 0);
