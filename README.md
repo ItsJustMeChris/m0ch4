@@ -12,6 +12,8 @@ Mocha currently features a small but versatile set of features which are useful 
   - Useful code to insert JMP instructions to our function in the middle of a remote function in a process, allowing us to execute our own code, or assembly, before returning to normal programmatic operation. See [This GIST](https://gist.github.com/ItsJustMeChris/1aeff828b43e6aa00a477b5c79da164c) for more information.
 - Wrapper to invoke functions from memory addresses.
   - Useful when wanting to call functions from a memory address, without the need to declare and manage a typedef of the function.
+- Wrapper function to invoke virtual functions in object Virtual Method Tables. 
+   - Useful for when you need to call a function inside of an object, without needing to reverse out the function address every time (VMT indexes rarely change in most software)  
 - Get mach-task port from PID.
   - Used to get a task from a process ID.
 - Get base address for a mach-task port.
