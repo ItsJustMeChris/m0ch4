@@ -9,6 +9,10 @@
 #include <mach/i386/kern_return.h>
 #include <iostream>
 #include <unistd.h>
+#include "mach-o/dyld_images.h"
+#include <mach/kern_return.h>
+#include <sys/_types/_uintptr_t.h>
+#include "mach-o/loader.h"
 
 #define JUMP(addr) ((void (*)(void))addr)();
 
@@ -66,6 +70,7 @@ public:
     {
         return (func)((uint64_t *)*(uint64_t **)base)[vmt_index];
     }
+    uintptr_t *FindDYLIB(const char *search);
 
 private:
 };

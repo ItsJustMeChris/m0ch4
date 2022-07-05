@@ -22,6 +22,9 @@ Mocha currently features a small but versatile set of features which are useful 
   - Use to write an arbitrary value at a memory address.
 - Wrapper function to read a value at a memory address.
   - Used to read an arbitrary value at a memory address.
+- Method to find DYLIB image base address in memory. 
+  - Useful for targetting dylibs inside of other processes.
+  - Useful for targetting your own dylib inside a process to deploy CRC style integrity checks on your own code to avoid dynamic manipulation. 
 - Macro to insert a JMP to a memory address.
   - Useful when GCC inline assembly doesn't want to cooperate or be simplistic.
 - MachO Binary information extractor.
