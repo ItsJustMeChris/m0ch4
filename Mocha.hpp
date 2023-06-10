@@ -71,6 +71,8 @@ public:
         return (func)((uint64_t *)*(uint64_t **)base)[vmt_index];
     }
     uintptr_t *FindDYLIB(const char *search);
+    void FreezeAllThreads(uint8_t);
+    void UnfreezeAllThreads(uint8_t);
 
 private:
 };

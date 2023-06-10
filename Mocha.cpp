@@ -328,6 +328,42 @@ uintptr_t *Mocha::FindDYLIB(const char *search)
     return 0;
 }
 
+void Mocha::FreezeAllThreads(uint8_t omitSelf)
+{
+    // Enumerate all threads
+    thread_act_array_t threads;
+    mach_msg_type_number_t thread_count;
+    task_threads(mach_task_self(), &threads, &thread_count);
+
+    // Freeze all threads
+    for (int i = 0; i < thread_count; i++)
+    {
+        // if current thread, skip
+        if (omitSelf && threads[i] == mach_thread_self())
+            continue;
+
+        thread_suspend(threads[i]);
+    }
+}
+
+void Mocha::UnfreezeAllThreads(uint8_t omitSelf)
+{
+    // Enumerate all threads
+    thread_act_array_t threads;
+    mach_msg_type_number_t thread_count;
+    task_threads(mach_task_self(), &threads, &thread_count);
+
+    // Unfreeze all threads
+    for (int i = 0; i < thread_count; i++)
+    {
+        // if current thread, skip
+        if (omitSelf && threads[i] == mach_thread_self())
+            continue;
+
+        thread_resume(threads[i]);
+    }
+}
+
 Mocha::Mocha()
 {
     pid_t pid = getpid();
